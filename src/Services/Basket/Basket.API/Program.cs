@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Basket.API.Data;
 using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
+using Discount.Grpc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,20 +36,20 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 //Grpc Services
-//builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
-//{
-//    options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
-//})
-//.ConfigurePrimaryHttpMessageHandler(() =>
-//{
-//    var handler = new HttpClientHandler
-//    {
-//        ServerCertificateCustomValidationCallback =
-//        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-//    };
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback =
+        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
 
-//    return handler;
-//});
+    return handler;
+});
 
 //Async Communication Services
 //builder.Services.AddMessageBroker(builder.Configuration);
